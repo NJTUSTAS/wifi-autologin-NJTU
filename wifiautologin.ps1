@@ -7,14 +7,14 @@ $channelshow = "中国移动&channel=@cmcc"
 # 选择不想要的注释掉。
 
 
-$url = 'https://u.njtech.edu.cn/cas/login?service=https://u.njtech.edu.cn/oauth2/authorize?client_id=Oe7wtp9CAMW0FVygUasZ&response_type=code&state=njtech'
+$url='https://u.njtech.edu.cn/cas/login?service=https://u.njtech.edu.cn/oauth2/authorize?client_id=Oe7wtp9CAMW0FVygUasZ&response_type=code&state=njtech'
 if (!((ping www.baidu.com) -match "TTL")) {
     # 验证有网络
     echo "getting cookies"
-    # rm tmp
-    #  curl.exe $url -c "cookie" -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
-    #     -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko'`
-    #     -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive'>>tmp
+    rm tmp
+     curl.exe $url -c "cookie" -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
+        -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko'`
+        -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive'>>tmp
     $tmp = cat tmp
 
     # get LT
@@ -43,7 +43,10 @@ if (!((ping www.baidu.com) -match "TTL")) {
     $DATA2 = "Cookie: JSESSIONID=$jsessionid; insert_cookie=$insert_cookie"
     echo "DATA2= $DATA2"
 
-    curl.exe 'https://u.njtech.edu.cn/cas/login?service=https://u.njtech.edu.cn/oauth2/authorize?client_id=Oe7wtp9CAMW0FVygUasZ&response_type=code%state=njtech' -H 'Accept: */*' -H 'Accept-Language: zh-cn' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' -H "$DATA2"  --data "$DATA" --compressed
+    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' -H "$DATA2"  --data "$DATA"
 
     echo "connect established."
+}
+else {
+    echo "connect has been established already."
 }
