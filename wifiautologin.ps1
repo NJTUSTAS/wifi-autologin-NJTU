@@ -22,15 +22,20 @@ else{
         -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive'|Out-String
 
     # get LT
-    $tmp -match " `"lt`" value=`"LT-.*`" "
-    $matches[0] -match "`"LT-[0-9]{6}-.*`""
+    $tmp -match "`"lt`" value=`"LT-.*`" "
+    $matches[0] -match "`"LT-[0-9]{6,8}-.*`""
     $matches[0] -match "[^`"]+"
     $LT = $matches[0]
     Write-Output "LT= $LT"
 
     # get EXEC
-    ($tmp -match "name=`"execution`"")[0] -match "value=`"`.*`""
-    $result = ($matches[0] -split "=")[-1]; $result -match "[^`"]+"; $EXEC = $matches[0]
+    $tmp -match "name=`"execution`" value=`".*`""
+    # like: name="execution" value="e1s1"
+    $matches[0] -match "value=`"`.*`""
+    # like: "e1s1"
+    $result = ($matches[0] -split "=")[-1]; 
+    # remove quotation marks
+    $result -match "[^`"]+"; $EXEC = $matches[0]
     Write-Output "EXEC= $EXEC"
 
     $cookie = Get-Content cookie
@@ -49,7 +54,11 @@ else{
     $DATA2 = "Cookie: JSESSIONID=$jsessionid; insert_cookie=$insert_cookie"
     Write-Output "DATA2= $DATA2"
 
-    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' -H "$DATA2"  --data "$DATA"
-
+    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
+        -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' `
+        -H 'Content-Type: application/x-www-form-urlencoded' `
+        -H 'Connection: keep-alive' `
+        -H "$DATA2"  `
+        --data "$DATA">ret.html
     Write-Output "connect established."
 }

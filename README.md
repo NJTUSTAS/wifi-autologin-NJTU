@@ -2,11 +2,12 @@
 
 ## 注意
 
-由于校园网登录验证切换，本库现在已经不能工作。
+~~由于校园网登录验证切换，本库现在已经不能工作。~~
+现在已经修复，可以正常使用
 
 ## 正文
 
-用于自动连接南京工业大学校园网。本项目直接起源于[此项目](https://github.com/dingyang666/autologin) 。
+用于自动连接南京工业大学校园网。本项目部分代码来源于[此项目](https://github.com/dingyang666/autologin) 。
 
 - sh 文件，主要目标是路由器用。配置方法：
 
@@ -24,6 +25,7 @@
   - 还没写
 
 鸣谢：
+
 - [卢曼可](https://github.com/dingyang666)
 
 - [杨凯](https://github.com/Secack)
