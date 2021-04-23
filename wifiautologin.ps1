@@ -3,36 +3,63 @@
 $username = ""
 $password = ""
 $channelshow = "中国移动&channel=@cmcc"
-# $channel="中国电信&channel=@telecom"
+# $channelshow="中国电信&channel=@telecom"
 # 选择不想要的注释掉。
 
-
+# $debug = $true
 $url='https://u.njtech.edu.cn/cas/login?service=https://u.njtech.edu.cn/oauth2/authorize?client_id=Oe7wtp9CAMW0FVygUasZ&response_type=code&state=njtech'
 
 # 判断是否已经联网
-if ((ping www.baidu.com -n 1) -match "TTL") {
+# -n ping 次数 -w 超时毫秒
+if ((ping www.baidu.com -n 1 -w 50) -match "TTL") {
     Write-Output "connect has been established already."
 }
 else{
     Write-Output "getting cookies..."
     
+    # $matches是 xxx -match 之后结果存储到的变量
+
     # get response
     $tmp = curl.exe $url -c "cookie" -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
         -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko'`
         -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive'|Out-String
+    # tmp>tmp.html
+
+    echo tmp.length=($tmp.length)
+
+    # if ($tmp.length){return}
 
     # get LT
-    $tmp -match " `"lt`" value=`"LT-.*`" "
-    $matches[0] -match "`"LT-[0-9]{6}-.*`""
+    Write-Output "`n getting lt...`n"
+    
+    # 得到类似 name="lt" value="LT-10107435-7QyDQLmVGgz00TkxW0QjxYCUlSNONf"
+
+    echo $tmp
+    if($tmp -notmatch 'name="lt" value="LT-.*"' ){
+        echo lt-1 $matches
+        return
+    }
+    
+    # 得到类似 "LT-10107435-7QyDQLmVGgz00TkxW0QjxYCUlSNONf"
+    $matches[0] -match '"LT-[0-9]{6,8}-.*"'
+    echo lt-2 $matches
+
+    # 去除引号
     $matches[0] -match "[^`"]+"
+    echo lt-3 $matches 
     $LT = $matches[0]
     Write-Output "LT= $LT"
 
     # get EXEC
-    ($tmp -match "name=`"execution`"")[0] -match "value=`"`.*`""
-    $result = ($matches[0] -split "=")[-1]; $result -match "[^`"]+"; $EXEC = $matches[0]
+    $tmp -match "name=`"execution`" value=`".*`""
+    $matches[0] -match "value=`"`.*`""
+    echo e1s1 $matches
+    $result = ($matches[0] -split "=")[-1]
+    $result -match "[^`"]+"
+    $EXEC = $matches[0]
     Write-Output "EXEC= $EXEC"
 
+    # 之前curl的时候把cookie内容写进了这个文件
     $cookie = Get-Content cookie
 
     # get insert_cookie
@@ -52,4 +79,6 @@ else{
     curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' -H "$DATA2"  --data "$DATA"
 
     Write-Output "connect established."
+    
+    ping baidu.com -n 1
 }
