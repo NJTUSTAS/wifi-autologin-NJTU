@@ -52,10 +52,12 @@ else{
 
     # get EXEC
     $tmp -match "name=`"execution`" value=`".*`""
+    # like: name="execution" value="e1s1"
     $matches[0] -match "value=`"`.*`""
-    echo e1s1 $matches
-    $result = ($matches[0] -split "=")[-1]
-    $result -match "[^`"]+"
+    # like: "e1s1"
+    $result = ($matches[0] -split "=")[-1]; 
+    # remove quotation marks
+    $result -match "[^`"]+"; 
     $EXEC = $matches[0]
     Write-Output "EXEC= $EXEC"
 
@@ -76,8 +78,12 @@ else{
     $DATA2 = "Cookie: JSESSIONID=$jsessionid; insert_cookie=$insert_cookie"
     Write-Output "DATA2= $DATA2"
 
-    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' -H "$DATA2"  --data "$DATA"
-
+    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
+        -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' `
+        -H 'Content-Type: application/x-www-form-urlencoded' `
+        -H 'Connection: keep-alive' `
+        -H "$DATA2"  `
+        --data "$DATA">ret.html
     Write-Output "connect established."
     
     ping baidu.com -n 1
