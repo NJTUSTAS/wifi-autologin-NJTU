@@ -25,7 +25,7 @@ else{
         -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive'|Out-String
     # tmp>tmp.html
 
-    echo tmp.length=($tmp.length)
+    # echo tmp.length=($tmp.length)
 
     # if ($tmp.length){return}
 
@@ -42,11 +42,11 @@ else{
     
     # 得到类似 "LT-10107435-7QyDQLmVGgz00TkxW0QjxYCUlSNONf"
     $matches[0] -match '"LT-[0-9]{6,8}-.*"'
-    echo lt-2 $matches
+    # echo lt-2 $matches
 
     # 去除引号
     $matches[0] -match "[^`"]+"
-    echo lt-3 $matches 
+    # echo lt-3 $matches 
     $LT = $matches[0]
     Write-Output "LT= $LT"
 
@@ -78,13 +78,15 @@ else{
     $DATA2 = "Cookie: JSESSIONID=$jsessionid; insert_cookie=$insert_cookie"
     Write-Output "DATA2= $DATA2"
 
-    curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
+    $ret = curl.exe $url -H 'Accept: */*' -H 'Accept-Language: zh-cn' `
         -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' `
         -H 'Content-Type: application/x-www-form-urlencoded' `
         -H 'Connection: keep-alive' `
         -H "$DATA2"  `
-        --data "$DATA">ret.html
-    Write-Output "connect established."
+        --data "$DATA"
+    $ret>ret.html
     
-    ping baidu.com -n 1
-}
+    sleep 1
+    if  ((ping baidu.com -n 1) -match "TTL")
+    {Write-Output "connect established."
+}}
